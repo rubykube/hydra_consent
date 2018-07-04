@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+  # app:
+  #   build:
+  #     context: ./app
+  #   ports:
+  #     - "4000:4000"
+  #   depends_on:
+  #     - consent
+  #     - db
+  #     - hydra
+  app:
+    build:
+      context: ./consent
+    depends_on:
+      - db
+      - hydra
+    ports:
+      - "3000:3000"
+    environment:
+      - HYDRA_URL=http://hydra:4444
+      - DB_PASSWORD=secret
+      - DB_HOST=db
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+
+  hydra_db:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=hydra
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=hydra
+  hydra:
+    image: oryd/hydra
+    ports:
+      - "4444:4444"
+    depends_on:
+      - hydra_db
+    environment:
+      - OAUTH2_ISSUER_URL=http://localhost:4444
+      - OAUTH2_CONSENT_URL=http://localhost:3003/consent
+      - OAUTH2_LOGIN_URL=http://localhost:3003/login
+      - SYSTEM_SECRET=youReallyNeedToChangeThis
+      - OAUTH2_SHARE_ERROR_DEBUG=1
+      - DATABASE_URL=postgres://hydra:secret@postgresd:5432/hydra?sslmode=disable
+
+volumes:
+  db_data:
