@@ -30,11 +30,15 @@ class HydraService
 
   def get(flow, challenge)
     response = self.class.get("/oauth2/auth/requests/#{flow}/#{challenge}")
-    response.body
+    parse_body(response.body)
   end
 
   def put(flow, action, challenge, body)
     response = self.class.put("/oauth2/auth/requests/#{flow}/#{challenge}/#{action}", body)
-    response.body
+    parse_body(response.body)
+  end
+
+  def parse_body(body)
+    JSON.parse body, symbolize_names: true
   end
 end
