@@ -1,14 +1,44 @@
 class AuthController < ApplicationController
-  def new
-    challenge_code = params[:login_challenge]
-    response = HydraService.new.getLoginRequest(challenge_code)
+  before_action :set_challenge_code
 
-    # TODO: Implement with nodejs consent app
-    # https://github.com/ory/hydra-login-consent-node/blob/master/routes/login.js
+  def new
+    response = hydra.getLoginRequest(@challenge_code)
+    logger.debug { response }
+
+    if response[:skip]
+      response = hydra.acceptLoginRequest(@challenge_code, subject: response[:subject]
+      logger.debug { response }
+      return redirect_to response[:redirect_to] if response[:redirect_to]
+    end
   end
 
   def create
-    # TODO: Implement with nodejs consent app
-    # https://github.com/ory/hydra-login-consent-node/blob/master/routes/login.js
+    logger.debug { params }
+
+    unless credentials_valid?
+      flash[:alert] = 'The username / password combination is not correct'
+      return render :new
+    end
+
+    response = hydra.acceptLoginRequest(@challenge_code, subject: params[:email],
+                                                         remember: params[:remember_me],
+                                                         remember_for: 3600)
+    logger.debug { response }
+    return redirect_to response[:redirect_to] if response[:redirect_to]
+    render :new
+  end
+
+  private
+
+  def set_challenge_code
+    @challenge_code = params[:login_challenge]
+  end
+
+  def hydra
+    HydraService.new
+  end
+
+  def credentials_valid?
+    params[:email] == 'user@example.com' && params[:password] == 'password'
   end
 end

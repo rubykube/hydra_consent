@@ -1,0 +1,31 @@
+<h1>Please log in</h1>
+<%= form_with(url: login_path, local: true) do |f| %>
+  <div>
+    <%= f.hidden_field :login_challenge, @challenge_code %>
+
+    <div class="row">
+      <%= f.label :email %>
+      <%= f.email_field :email, autofocus: true, autocomplete: 'email',
+                                value: 'user@example.com'
+                                placeholder: 'Enter email', required: true %>
+    </div>
+
+    <div class="row">
+      <%= f.label :password %>
+      <%= f.password_field :password, value: 'password'
+                                      placeholder: 'Enter password',
+                                      required: true %>
+    </div>
+
+    <div class="row">
+      <%= f.label :remember_me do %>
+        <%= f.check_box :remember_me, class: 'checkbox' %>
+        Remember me
+      <% end %>
+    </div>
+
+    <div class="row">
+      <%= f.submit 'Submit' %>
+    </div>
+  </div>
+<% end %>
