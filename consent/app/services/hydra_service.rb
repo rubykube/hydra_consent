@@ -18,7 +18,7 @@ class HydraService
     get('consent', challenge)
   end
 
-  def acceptConsentRequest: function (challenge, body)
+  def acceptConsentRequest(challenge, body)
     put('consent', 'accept', challenge, body)
   end
 
