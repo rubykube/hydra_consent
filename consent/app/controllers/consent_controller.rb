@@ -25,6 +25,7 @@ class ConsentController < ApplicationController
 
   def set_challenge_code
     @challenge_code = params[:consent_challenge]
+    not_found unless @challenge_code
   end
 
   def hydra

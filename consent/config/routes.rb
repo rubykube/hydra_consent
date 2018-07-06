@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  get  '/login', to: 'auth#new'
-  post  '/login', to: 'auth#create'
+  get  '/login', to: 'sessions#new'
+  post  '/login', to: 'sessions#create'
 
   get  '/consent', to: 'consent#new'
   post  '/consent', to: 'consent#create'

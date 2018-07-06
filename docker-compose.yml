@@ -13,6 +13,8 @@ services:
   app:
     build:
       context: ./consent
+    volumes:
+      - ./consent:/home/app
     depends_on:
       - db
       - hydra

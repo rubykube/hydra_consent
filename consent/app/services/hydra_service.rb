@@ -40,5 +40,7 @@ class HydraService
 
   def parse_body(body)
     JSON.parse body, symbolize_names: true
+  rescue StandardError => e
+    { error: e.message }
   end
 end

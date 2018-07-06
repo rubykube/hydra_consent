@@ -9,6 +9,14 @@
   </head>
 
   <body>
+    <p>
+      <% if flash[:alert] %>
+        <pre>
+          <%= flash[:alert] %>
+        </pre>
+      <% end %>
+    </p>
+
     <%= yield %>
   </body>
 </html>

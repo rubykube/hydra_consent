@@ -1,18 +1,18 @@
 <h1>Please log in</h1>
 <%= form_with(url: login_path, local: true) do |f| %>
   <div>
-    <%= f.hidden_field :login_challenge, @challenge_code %>
+    <%= f.hidden_field :login_challenge, value: @challenge_code %>
 
     <div class="row">
       <%= f.label :email %>
       <%= f.email_field :email, autofocus: true, autocomplete: 'email',
-                                value: 'user@example.com'
+                                value: 'user@example.com',
                                 placeholder: 'Enter email', required: true %>
     </div>
 
     <div class="row">
       <%= f.label :password %>
-      <%= f.password_field :password, value: 'password'
+      <%= f.password_field :password, value: 'password',
                                       placeholder: 'Enter password',
                                       required: true %>
     </div>
