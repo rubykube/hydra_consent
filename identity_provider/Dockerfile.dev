@@ -1,0 +1,36 @@
+FROM ruby:2.5.0
+
+ARG RAILS_ENV=development
+
+# Devise requires secret key to be set during image build or it raises an error
+# preventing from running any scripts.
+# Users should override this variable by passing environment variable on container start.
+ENV RAILS_ENV=${RAILS_ENV} \
+    APP_HOME=/home/app \
+    SECRET_KEY_BASE='changeme'
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+ && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+ && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+ && apt-get update \
+ && apt-get install -y nodejs yarn
+
+RUN mkdir -p $APP_HOME
+WORKDIR $APP_HOME
+
+COPY Gemfile Gemfile.lock $APP_HOME/
+
+# Install dependencies
+RUN mkdir -p /opt/vendor/bundle && bundle install --path /opt/vendor/bundle
+
+# Copy the main application.
+COPY . $APP_HOME
+
+RUN bundle exec rake tmp:create yarn:install
+
+EXPOSE 3000
+
+# The main command to run when the container starts. Also
+# tell the Rails dev server to bind to all interfaces by
+# default.
+CMD ["bundle", "exec", "puma", "--config", "config/puma.rb"]

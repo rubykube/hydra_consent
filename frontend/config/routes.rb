@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   root 'sessions#new'
 
   resources :sessions, only: :new do
-    get :callback
+    get :callback, on: :collection
   end
 end

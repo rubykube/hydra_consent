@@ -6,13 +6,13 @@ default: &default
 
 development:
   <<: *default
-  database: consent_development
+  database: frontend_development
   host: <%= ENV.fetch('DB_HOST', 'localhost') %>
   password: <%= ENV.fetch("DB_PASSWORD", '') %>
 
 test:
   <<: *default
-  database: consent_test
+  database: frontend_test
   host: <%= ENV['DB_HOST'] %>
   password: <%= ENV.fetch("DB_PASSWORD") %>
 

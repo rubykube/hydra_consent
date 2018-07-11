@@ -1,41 +1,40 @@
 version: '3'
 
 services:
-  app:
+  frontend:
     build:
-      context: ./app
-      dockerfile: Dockerfile.dev
+      context: ./frontend
+      dockerfile: ./Dockerfile.dev
     volumes:
-      - ./app:/home/app
+      - ./frontend:/home/app
     ports:
       - "3000:3000"
     depends_on:
       - db
-      - consent
+      - identity_provider
     environment:
-      - HYDRA_AUTH_URL=http://hydra:4444/oauth2/auth?client_id=app&response_type=code&state=foobar&redirect_uri=http://localhost:3000/callback
+      - HYDRA_AUTH_URL=http://localhost:4444/oauth2/auth?client_id=app&response_type=code&state=72582c142d403a972b579f05140bf93f&redirect_uri=http://localhost:3000/sessions/callback
       - CLIENT_ID=app
       - CLIENT_SECRET=secret
-      - AUTH_STATE=foobar
+      - AUTH_STATE=72582c142d403a972b579f05140bf93f
       - DB_PASSWORD=secret
       - DB_HOST=db
-    restart: unless-stopped
-  consent:
+
+  identity_provider:
     build:
-      context: ./consent
-      dockerfile: Dockerfile.dev
+      context: ./identity_provider
+      dockerfile: ./Dockerfile.dev
     volumes:
-      - ./consent:/home/app
+      - ./identity_provider:/home/app
     depends_on:
       - db
       - hydra
     ports:
-      - "4000:4000"
+      - "4000:3000"
     environment:
       - HYDRA_URL=http://hydra:4444
       - DB_PASSWORD=secret
       - DB_HOST=db
-    restart: unless-stopped
 
   db:
     image: mysql:5.7
@@ -55,7 +54,7 @@ services:
       - SYSTEM_SECRET=YSwy2MAEt7gALtW~uJC3x_3mWZ_CNRC0
 
   hydra-migrate:
-    image: oryd/hydra:v0.11.13-alpine
+    image: oryd/hydra:v1.0.0-beta.5-alpine
     links:
       - hydra_db:hydra_db
     environment:
@@ -65,7 +64,7 @@ services:
       migrate sql -e
     restart: on-failure
   hydra:
-    image: oryd/hydra:v0.11.13-alpine
+    image: oryd/hydra:v1.0.0-beta.5-alpine
     ports:
       - "4444:4444"
     links:
@@ -76,8 +75,8 @@ services:
       - hydra-migrate
     environment:
       - OAUTH2_ISSUER_URL=http://localhost:4444
-      - OAUTH2_CONSENT_URL=http://localhost:3003/consent
-      - OAUTH2_LOGIN_URL=http://localhost:3003/login
+      - OAUTH2_CONSENT_URL=http://localhost:4000/consent
+      - OAUTH2_LOGIN_URL=http://localhost:4000/login
       - SYSTEM_SECRET=YSwy2MAEt7gALtW~uJC3x_3mWZ_CNRC0
       - OAUTH2_SHARE_ERROR_DEBUG=1
       - DATABASE_URL=postgres://hydra:secret@hydra_db:5432/hydra?sslmode=disable
