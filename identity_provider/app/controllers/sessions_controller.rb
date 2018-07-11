@@ -2,10 +2,14 @@ class SessionsController < ApplicationController
   before_action :set_challenge_code
 
   def new
+    p 'action'
     response = hydra.getLoginRequest(@challenge_code)
+    p response
     logger.debug { response }
 
-    flash[:alert] = response[:error]
+    if response[:error]
+      flash[:alert] = response
+    end
 
     if response[:skip]
       response = hydra.acceptLoginRequest(@challenge_code, subject: response[:subject])
@@ -16,18 +20,20 @@ class SessionsController < ApplicationController
   end
 
   def create
-    logger.debug { params }
-
     unless credentials_valid?
       flash[:alert] = 'The username / password combination is not correct'
       return render :new
     end
 
-    response = hydra.acceptLoginRequest(@challenge_code, subject: params[:email],
-                                                         remember: params[:remember_me],
-                                                         remember_for: 3600)
+    hydra_params = { subject: params[:email] }
+    hydra_params.merge!(remember: true, remember_for: 3600) if params[:remember_me] == '1'
+    response = hydra.acceptLoginRequest(@challenge_code, hydra_params)
+
     logger.debug { response }
-    flash[:alert] = response[:error]
+    if response[:error]
+      flash[:alert] = response
+    end
+
     return redirect_to response[:redirect_to] if response[:redirect_to]
     render :new
   end

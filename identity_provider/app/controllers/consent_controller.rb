@@ -5,6 +5,10 @@ class ConsentController < ApplicationController
     response = hydra.getConsentRequest(@challenge_code)
     logger.debug { response }
 
+    if response[:error]
+      flash[:alert] = response
+    end
+
     if response[:skip]
       response = hydra.acceptConsentRequest(@challenge_code, grant_scope: response[:requested_scope]
       logger.debug { response }
