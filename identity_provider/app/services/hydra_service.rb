@@ -31,7 +31,7 @@ class HydraService
   def get(flow, challenge)
     Rails.logger.debug { "Flow #{flow.inspect}" }
     Rails.logger.debug { "challenge #{challenge.inspect}" }
-    Rails.response = self.class.get("/oauth2/auth/requests/#{flow}/#{challenge}")
+    response = self.class.get("/oauth2/auth/requests/#{flow}/#{challenge}")
     parse_body(response.body)
   end
 
