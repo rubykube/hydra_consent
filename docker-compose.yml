@@ -1,25 +1,36 @@
 version: '3'
 
 services:
-  # app:
-  #   build:
-  #     context: ./app
-  #   ports:
-  #     - "4000:4000"
-  #   depends_on:
-  #     - consent
-  #     - db
-  #     - hydra
   app:
     build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./app:/home/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - consent
+    environment:
+      - HYDRA_AUTH_URL=http://hydra:4444/oauth2/auth?client_id=app&response_type=code&state=foobar&redirect_uri=http://localhost:3000/callback
+      - CLIENT_ID=app
+      - CLIENT_SECRET=secret
+      - AUTH_STATE=foobar
+      - DB_PASSWORD=secret
+      - DB_HOST=db
+    restart: unless-stopped
+  consent:
+    build:
       context: ./consent
+      dockerfile: Dockerfile.dev
     volumes:
       - ./consent:/home/app
     depends_on:
       - db
       - hydra
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - HYDRA_URL=http://hydra:4444
       - DB_PASSWORD=secret
