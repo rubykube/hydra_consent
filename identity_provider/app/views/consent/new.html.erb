@@ -1,0 +1,38 @@
+<h1>An application requests access to your data!</h1>
+<%= form_with(url: consent_path, local: true) do |f| %>
+  <div>
+    <%= f.hidden_field :consent_challenge, value: @challenge_code %>
+
+    <p>
+      Hi <%= @subject %>, application
+      <strong><%= @client[:client_name] || @client[:id] %></strong>
+      wants access resources on your behalf and to
+    </p>
+
+    <% @scopes.each do |scope| %>
+      <div class="row">
+        <%= f.label scope do %>
+          <%= f.check_box :scopes, { class: 'checkbox', multiple: true }, scope, false %>
+          <%= scope %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <p>
+      Do you want to be asked next time when this application wants to access your data? The application will
+      not be able to ask for more permissions without your consent.
+    </p>
+
+    <div class="row">
+      <%= f.label :remember_me do %>
+        <%= f.check_box :remember_me, { class: 'checkbox' }, nil, false %>
+        Remember me
+      <% end %>
+    </div>
+
+    <div class="row">
+      <%= f.submit 'Allow access', name: 'allow' %>
+      <%= f.submit 'Deny access', name: 'deny' %>
+    </div>
+  </div>
+<% end %>

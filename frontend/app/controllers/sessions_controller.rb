@@ -3,7 +3,6 @@ class SessionsController < ApplicationController
   end
 
   def callback
-    p params
-    render plain: 'success callback'
+    render plain: params
   end
 end

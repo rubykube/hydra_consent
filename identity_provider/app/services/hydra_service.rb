@@ -29,18 +29,14 @@ class HydraService
   private
 
   def get(flow, challenge)
-    Rails.logger.debug { "Flow #{flow.inspect}" }
-    Rails.logger.debug { "challenge #{challenge.inspect}" }
     response = self.class.get("/oauth2/auth/requests/#{flow}/#{challenge}")
     parse_body(response.body)
   end
 
   def put(flow, action, challenge, body)
-    Rails.logger.debug { "Flow #{flow.inspect}" }
-    Rails.logger.debug { "action #{action.inspect}" }
-    Rails.logger.debug { "challenge #{challenge.inspect}" }
-    Rails.logger.debug { "body #{body.inspect}" }
-    response = self.class.put("/oauth2/auth/requests/#{flow}/#{challenge}/#{action}", body)
+    response = self.class.put("/oauth2/auth/requests/#{flow}/#{challenge}/#{action}",
+                              body: body.to_json,
+                              headers: { 'Content-Type' => 'application/json' })
     parse_body(response.body)
   end
 
