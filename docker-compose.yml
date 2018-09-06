@@ -54,7 +54,7 @@ services:
       - SYSTEM_SECRET=YSwy2MAEt7gALtW~uJC3x_3mWZ_CNRC0
 
   hydra-migrate:
-    image: oryd/hydra:v1.0.0-beta.6-alpine
+    image: oryd/hydra:v1.0.0-beta.9-alpine
     links:
       - hydra_db:hydra_db
     environment:
@@ -63,8 +63,9 @@ services:
     command:
       migrate sql -e
     restart: on-failure
+
   hydra:
-    image: oryd/hydra:v1.0.0-beta.6-alpine
+    image: oryd/hydra:v1.0.0-beta.9-alpine
     ports:
       - "4444:4444"
     links:
