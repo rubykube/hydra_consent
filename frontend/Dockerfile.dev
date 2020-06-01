@@ -7,7 +7,9 @@ ARG RAILS_ENV=development
 # Users should override this variable by passing environment variable on container start.
 ENV RAILS_ENV=${RAILS_ENV} \
     APP_HOME=/home/app \
-    SECRET_KEY_BASE='changeme'
+    SECRET_KEY_BASE='changeme' \
+    DB_PASSWORD='secret'
+
 
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
  && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
@@ -27,6 +29,8 @@ RUN mkdir -p /opt/vendor/bundle && bundle install --path /opt/vendor/bundle
 COPY . $APP_HOME
 
 RUN bundle exec rake tmp:create yarn:install
+RUN bundle exec rake db:crete
+RUN bundle exec rake db:migrate
 
 EXPOSE 3000
 
