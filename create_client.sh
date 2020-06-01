@@ -1,8 +1,9 @@
 docker-compose run --rm hydra clients create \
-    --endpoint http://hydra:4444 \
+    --endpoint http://hydra:4445 \
     --id app \
     --secret secret \
     --grant-types authorize_code,refresh_token,client_credentials \
-    --response-types token,code,id_token \
+    --response-types code \
     --scope openid,offline \
-    --callbacks http://localhost:3000/sessions/callback
+    --callbacks http://localhost:3000/sessions/callback \
+    --token-endpoint-auth-method client_secret_basic

@@ -29,12 +29,12 @@ class HydraService
   private
 
   def get(flow, challenge)
-    response = self.class.get("/oauth2/auth/requests/#{flow}/#{challenge}")
+    response = self.class.get("/oauth2/auth/requests/#{flow}?challenge\=#{challenge}")
     parse_body(response.body)
   end
 
   def put(flow, action, challenge, body)
-    response = self.class.put("/oauth2/auth/requests/#{flow}/#{challenge}/#{action}",
+    response = self.class.put("/oauth2/auth/requests/#{flow}/#{action}?challenge\=#{challenge}",
                               body: body.to_json,
                               headers: { 'Content-Type' => 'application/json' })
     parse_body(response.body)
